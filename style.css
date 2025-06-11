@@ -16,11 +16,12 @@ body {
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 90%; /* Changed from 80% */
-    max-width: 900px; /* Changed from 700px */
+    width: 90%; /* Keeping width relative for responsiveness */
 
-    /* Existing properties for scrolling */
-    max-height: 200px;
+    /* Updated dimensions */
+    max-width: 1000px; /* Increased from 900px */
+    max-height: 250px; /* Increased from 200px */
+
     overflow-y: auto;
     box-sizing: border-box; /* Ensures padding & border are within max-height */
 }
@@ -64,12 +65,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
-    padding: 10px;
+    gap: 8px; /* Increased from 5px for row spacing */
+    padding: 15px; /* Increased from 10px */
     background-color: #d1d1d1;
     border-radius: 5px;
-    width: 80%;
-    max-width: 700px;
+    width: 80%; /* This might be fine, or increase to 90% like text-area */
+    max-width: 1000px; /* Increased from 700px, to match text area */
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -77,28 +78,28 @@ body {
     display: flex;
     justify-content: center;
     width: 100%;
-    gap: 2px; /* Add small gap between keys in a row */
+    gap: 4px; /* Increased from 2px for key spacing in a row */
 }
 
 #virtual-keyboard .key {
     /* background-color: #f9f9f9; /* Default background removed to allow zone colors to show */
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 0; /* Reset padding, manage size with height/line-height */
-    height: 40px; /* Standard key height */
-    line-height: 40px; /* Center text vertically */
+    padding: 0;
+    height: 48px; /* Increased from 40px */
+    line-height: 48px; /* Match new height */
     text-align: center;
-    font-size: 16px;
+    font-size: 18px; /* Increased from 16px */
     font-weight: bold;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    flex-grow: 1; /* Default grow factor */
-    flex-basis: 0; /* Distribute space based on flex-grow */
-    min-width: 30px; /* Absolute minimum width for very small keys */
-    margin: 2px; /* Small margin around each key */
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 35px; /* Increased from 30px */
+    margin: 0; /* Rely on gap for spacing */
     transition: background-color 0.2s, box-shadow 0.2s;
     cursor: default;
 }
@@ -145,9 +146,9 @@ body {
 #virtual-keyboard .key.key-backspace,
 #virtual-keyboard .key.key-enter,
 #virtual-keyboard .key.key-shift,
-#virtual-keyboard .key.key-tab, /* Added tab here */
-#virtual-keyboard .key.key-modifier { /* Added modifier for Control/Alt */
-    font-size: 13px; /* Slightly smaller font for longer text keys */
+#virtual-keyboard .key.key-tab,
+#virtual-keyboard .key.key-modifier {
+    font-size: 15px; /* Increased from 13px, but kept smaller than base key font */
 }
 
 .correct-letter {
@@ -282,8 +283,12 @@ body {
 
 #savedTextsSection {
     width: 90%;
-    max-width: 900px; /* Match text area width */
-    margin: 30px auto; /* Centered, with space above */
+    max-width: 1000px; /* Align with new max-width of other main sections */
+    margin-top: 80px; /* Increased from 30px */
+    margin-bottom: 50px; /* Ensure some space at the very bottom of the page */
+    margin-left: auto;
+    margin-right: auto;
+
     padding: 15px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
