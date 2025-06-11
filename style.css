@@ -12,7 +12,12 @@ body {
 #text-to-type-container {
     border: 1px solid #ccc;
     padding: 20px;
-    margin-bottom: 30px;
+
+    margin-top: 30px; /* New: Explicit top margin */
+    margin-bottom: 30px; /* Existing */
+    margin-left: auto; /* Existing */
+    margin-right: auto; /* Existing */
+
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -30,42 +35,40 @@ body {
     font-size: 24px;
     line-height: 38px; /* This defines the spacing for our lines */
 
-    padding-top: 3px; /* Reduced from 5px, small offset from top border/edge */
+    padding-top: 0; /* Removed top padding to simplify first-line alignment */
 
     background-image: linear-gradient(to bottom,
-        transparent calc(38px - 1px), /* Transparent until the last pixel */
-        #d1d1d1 calc(38px - 1px),   /* Line color starts (slightly darker grey for better visibility) */
-        #d1d1d1 38px               /* Line color ends */
+        transparent 28px,  /* Transparent until 28px */
+        #c0c0c0 28px,      /* Line color starts (silver - trying a different shade) */
+        #c0c0c0 29px,      /* Line is 1px thick */
+        transparent 29px   /* Transparent again until the end of the 38px block */
     );
     background-size: 100% 38px; /* Repeat every 38px vertically */
-    background-attachment: local; /* Scroll with text */
-    background-origin: content-box; /* CRITICAL: Start background after padding */
+    background-attachment: local;
+    background-origin: content-box; /* Ensure this is present */
 
     white-space: pre-wrap;
     word-break: break-all;
     text-align: left;
-    min-height: 100%; /* Ensure background covers area if text is short */
-    color: #333; /* Ensure good text contrast if not set elsewhere */
+    min-height: 100%;
+    color: #333;
 }
 
 #text-to-type span {
     display: inline-block;
-    padding: 0 1px; /* NO vertical padding */
+    padding: 0 1px;
     border-radius: 3px;
     transition: background-color 0.2s, color 0.2s;
-    vertical-align: baseline; /* Helps align text consistently */
+    vertical-align: baseline; /* Crucial for text sitting on the line */
 }
 
 #text-to-type span.placeholder {
     color: #555;
 }
 
-#text-to-type span { /* General rule for all spans inside text-to-type */
-    display: inline-block;
-    padding: 0 1px;
-    border-radius: 3px;
-    transition: background-color 0.2s, color 0.2s;
-    vertical-align: baseline;
+/* The duplicated rule below will be removed by this replacement,
+   as the search block includes the first #text-to-type span rule
+   and this replacement provides only one. */
 }
 
 span.newline-char {
@@ -360,7 +363,7 @@ span.newline-char.current-letter-text::before {
 #savedTextsSection {
     width: 90%;
     max-width: 1000px;
-    margin-top: 120px; /* Increased from 80px */
+    margin-top: 250px; /* Significantly increased from 120px */
     margin-bottom: 50px;
     margin-left: auto;
     margin-right: auto;
