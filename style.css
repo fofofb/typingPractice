@@ -18,6 +18,11 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     width: 80%;
     max-width: 700px;
+
+    /* New properties for scrolling */
+    max-height: 200px;
+    overflow-y: auto;
+    box-sizing: border-box; /* Ensures padding & border are within max-height */
 }
 
 #text-to-type {

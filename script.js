@@ -50,7 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (textSpans.length > 0) {
             textSpans[0].classList.add('current-letter-text');
-            updateKeyboardHighlight(textSpans[0].textContent, true);
+            updateKeyboardHighlight(textSpans[0].textContent, true); // Highlight first key
+
+            // --- Auto-scroll for the first character ---
+            if (typeof textSpans[0].scrollIntoView === 'function') {
+                textSpans[0].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' }); // 'auto' for initial load
+            }
+            // --- End auto-scroll for first character ---
         }
     }
 
@@ -205,10 +211,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentIndex < textSpans.length) {
                 const nextSpan = textSpans[currentIndex];
                 nextSpan.classList.add('current-letter-text');
-                updateKeyboardHighlight(nextSpan.textContent, true);
+                updateKeyboardHighlight(nextSpan.textContent, true); // Activate next key
+
+                // --- New auto-scroll logic ---
+                if (nextSpan && typeof nextSpan.scrollIntoView === 'function') {
+                    nextSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                }
+                // --- End of new auto-scroll logic ---
+
             } else {
-                setTimeout(() => alert("Congratulations! Text completed."), 100);
+                // Text completed
                 updateKeyboardHighlight(expectedChar, false); // Deactivate last key
+                setTimeout(() => alert("Congratulations! Text completed."), 100);
             }
         } else { // Incorrect key
             if (currentIndex < textSpans.length) {
