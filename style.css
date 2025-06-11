@@ -57,26 +57,37 @@ body {
 }
 
 #text-to-type span.placeholder {
-    color: #555; /* Adjusted from #666 for potentially darker lines */
+    color: #555;
+}
+
+#text-to-type span { /* General rule for all spans inside text-to-type */
+    display: inline-block;
+    padding: 0 1px;
+    border-radius: 3px;
+    transition: background-color 0.2s, color 0.2s;
+    vertical-align: baseline;
 }
 
 span.newline-char {
-    font-size: 0; /* Hide the actual '\n' character text */
-    color: transparent; /* Further ensure original '\n' is not visible */
-    position: relative; /* For positioning the pseudo-element */
-    /* display: inline-block; is already set on all spans */
-    vertical-align: baseline; /* Helps align with text if inline-block causes issues */
+    display: block; /* Force it to take full width and break line */
+    width: 100%;    /* Explicitly take full width */
+    height: 38px;   /* Match the parent's line-height to occupy one line of the paper */
+    position: relative; /* For positioning the ::before pseudo-element */
+    /* Keeping these to ensure the original \n doesn't render if display:block isn't enough */
+    font-size: 0;
+    color: transparent;
 }
 
 span.newline-char::before {
-    content: "↵"; /* The carriage return arrow symbol */
-    font-size: 22px; /* Visual size of the arrow */
-    color: #6c757d; /* Medium grey for the arrow symbol */
+    content: "↵";
+    font-size: 22px;
+    color: #6c757d;
     position: absolute;
     left: 0;
-    top: 50%; /* Vertically center based on parent's line-height */
-    transform: translateY(-50%); /* Fine-tune vertical centering */
-    line-height: normal; /* Avoid inheriting large line-height from parent that might affect centering */
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: 2px; /* Small padding from the very edge */
+    line-height: normal;
 }
 
 #text-to-type span.current-letter-text {
@@ -84,9 +95,14 @@ span.newline-char::before {
     border-bottom: 2px solid #007bff;
 }
 
-/* When a newline char span is also the current letter */
+span.newline-char.current-letter-text {
+    /* The background from .current-letter-text will apply to the block span. */
+    /* No special background needed here unless to override the default .current-letter-text */
+}
+
 span.newline-char.current-letter-text::before {
-    color: white; /* Make symbol white to be visible on typical current-letter-text background */
+    color: #007bff; /* Make the symbol itself blue when it's current */
+    font-weight: bold;
 }
 
 #virtual-keyboard {
