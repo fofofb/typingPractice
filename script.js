@@ -99,25 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return (correct / (correct + errors)) * 100;
     }
 
-    function updateStatsDisplay(isFinal = false) {
+    function updateStatsDisplay() { // Removed isFinal parameter
         if (!wpmDisplay || !accuracyDisplay || !kpmDisplay) return;
 
         let currentAccuracy = calculateAccuracy(correctCharsTyped, totalErrors);
         accuracyDisplay.textContent = `Accuracy: ${currentAccuracy.toFixed(1)}%`;
 
-        if (isFinal && timerStarted) {
+        if (timerStarted) {
             const elapsedTimeMillis = Date.now() - startTime;
-            let finalWPM = calculateWPM(correctCharsTyped, elapsedTimeMillis);
-            let finalKPM = calculateKPM(correctCharsTyped, elapsedTimeMillis);
-            wpmDisplay.textContent = `WPM: ${finalWPM}`;
-            kpmDisplay.textContent = `KPM: ${finalKPM}`;
-        } else if (!timerStarted) { // Before typing starts or after reset
+            // Only show speed after a small delay/chars to avoid extreme values
+            if (elapsedTimeMillis > 500 && correctCharsTyped > 0) {
+                let currentWPM = calculateWPM(correctCharsTyped, elapsedTimeMillis);
+                let currentKPM = calculateKPM(correctCharsTyped, elapsedTimeMillis);
+                wpmDisplay.textContent = `WPM: ${currentWPM}`;
+                kpmDisplay.textContent = `KPM: ${currentKPM}`;
+            } else if (correctCharsTyped === 0 && elapsedTimeMillis > 500) { // Timer started (e.g. by error) but no correct chars
+                 wpmDisplay.textContent = "WPM: 0";
+                 kpmDisplay.textContent = "KPM: 0";
+            }
+            // If timer started but not enough time/chars for a stable reading yet,
+            // WPM/KPM will retain their previous state (e.g., "---" from initial or reset).
+        } else { // Timer not started (initial state or after reset)
             wpmDisplay.textContent = "WPM: ---";
-            accuracyDisplay.textContent = "Accuracy: ---%"; // Show 100% or ---
+            accuracyDisplay.textContent = "Accuracy: ---%";
             kpmDisplay.textContent = "KPM: ---";
         }
-        // Live WPM/KPM could be calculated here if desired, but might be too jumpy
-        // else if (timerStarted) { ... }
     }
 
     function resetTypingPractice() {
@@ -176,9 +182,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keydown event listener
     document.addEventListener('keydown', (event) => {
+        // If modal is open and textarea has focus, let textarea handle keys.
+        if (customTextModal && customTextModal.style.display === 'block' && document.activeElement === customTextArea) {
+            // Allow textarea to receive all key inputs normally, including space.
+            return;
+        }
+
+        // If we are here, the main typing game is active.
+        // Prevent page scroll for spacebar in the main typing game.
+        // This needs to be unconditional for spacebar if game is active.
+        if (event.key === ' ') {
+            event.preventDefault();
+        }
+
         const pressedKey = event.key;
         if (currentIndex >= textSpans.length) return;
-        if (customTextModal && customTextModal.style.display === "block") { if (document.activeElement === customTextArea || pressedKey === 'Escape') return; if (pressedKey === 'Enter') return; return; }
+        // The check for modal open and customTextArea NOT being focused is tricky.
+        // The first check (modal open AND textarea focused -> return) is the most important.
+        // If modal is open but something else is focused (e.g. a button in modal, or modal itself),
+        // spacebar might still scroll. The unconditional preventDefault above handles this
+        // as long as the first check (textarea focused) has passed.
+        // We need to ensure Escape still works for modal.
+        if (customTextModal && customTextModal.style.display === 'block' && pressedKey === 'Escape') {
+             // closeModalBtn.onclick(); // or similar logic to close modal
+             // For now, this specific escape handling for modal is not part of the spacebar fix.
+             // The existing modal logic handles escape via window.onclick or close button.
+        }
+
 
         const currentSpan = textSpans[currentIndex];
         const expectedChar = currentSpan.textContent;
@@ -186,7 +216,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (expectedChar === '\n') { if (pressedKey === 'Enter') comparisonPassed = true; }
         else if (pressedKey === expectedChar) comparisonPassed = true;
 
-        if (comparisonPassed && (pressedKey === ' ' || pressedKey === 'Enter')) event.preventDefault();
+        // Prevent default browser action for Enter if it was correctly typed for a newline.
+        // Spacebar's preventDefault is now handled unconditionally above for the main game context.
+        if (comparisonPassed && (pressedKey === 'Enter')) { // Only Enter needs specific check here now
+            event.preventDefault();
+        }
 
         const nonTypingFunctionalKeys = ['Shift', 'Control', 'Alt', 'CapsLock', 'Meta', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Backspace'];
         if (nonTypingFunctionalKeys.includes(pressedKey) && !comparisonPassed) {
@@ -210,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (nextSpan && typeof nextSpan.scrollIntoView === 'function') nextSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
             } else { // Text completed
                 updateKeyboardHighlight(expectedChar, false);
-                updateStatsDisplay(true); // Calculate and show final WPM/KPM
+                updateStatsDisplay(); // WPM/KPM will be final as timer is running and text is complete
                 setTimeout(() => alert("Congratulations! Text completed."), 100);
             }
         } else {
