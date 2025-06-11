@@ -10,7 +10,20 @@
     <div id="text-to-type-container">
         <div id="text-to-type"></div>
     </div>
+    <div id="controls"> <!-- New container for controls -->
+        <button id="customTextBtn">Use Custom Text</button>
+    </div>
     <div id="virtual-keyboard"></div>
+
+    <!-- Modal Structure (add before closing </body> tag) -->
+    <div id="customTextModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="closeModalBtn" class="close-button">&times;</span>
+            <h2>Enter Custom Text</h2>
+            <textarea id="customTextArea" rows="10" style="width: 95%;"></textarea>
+            <button id="submitCustomTextBtn">Start Practice with this Text</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

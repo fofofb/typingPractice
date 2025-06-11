@@ -65,7 +65,7 @@ body {
 }
 
 #virtual-keyboard .key {
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; /* Default background removed to allow zone colors to show */
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 0; /* Reset padding, manage size with height/line-height */
@@ -99,13 +99,28 @@ body {
 
 /* Visual style for special character keys (non-letters/numbers symbols) */
 #virtual-keyboard .key.special-visual {
-   /* background-color: #e0e0e0; /* Example: slightly different background */
    /* font-weight: normal; */
+   /* background-color for special-visual is removed as zones will color it */
 }
 
+/* Finger Zone Colors */
+.zone-l-pinky { background-color: #FFDDC1; } /* Light Orange/Peach */
+.zone-l-ring { background-color: #FFFFE0; } /* Light Yellow */
+.zone-l-middle { background-color: #D0FFD0; } /* Light Green */
+.zone-l-index { background-color: #ADD8E6; } /* Light Blue */
+.zone-l-index-far { background-color: #B0C4DE; } /* Light Steel Blue */
+
+.zone-r-index-far { background-color: #B0C4DE; } /* Light Steel Blue */
+.zone-r-index { background-color: #ADD8E6; } /* Light Blue */
+.zone-r-middle { background-color: #D0FFD0; } /* Light Green */
+.zone-r-ring { background-color: #FFFFE0; } /* Light Yellow */
+.zone-r-pinky { background-color: #FFDDC1; } /* Light Orange/Peach */
+
+.zone-thumb { background-color: #E0E0E0; } /* Light Grey for Space */
+
 #virtual-keyboard .key.active {
-    background-color: #007bff;
-    color: white;
+    background-color: #007bff !important;
+    color: white !important;
     box-shadow: 0 0 5px rgba(0,123,255,0.5);
 }
 
@@ -136,4 +151,100 @@ body {
 @keyframes flash {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
+}
+
+#virtual-keyboard .key.key-incorrect-flash {
+    background-color: #dc3545 !important;
+    color: white !important;
+    animation: subtle-shake 0.3s;
+}
+
+/* Optional subtle shake animation */
+@keyframes subtle-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+#controls {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#customTextBtn {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+#customTextBtn:hover {
+    background-color: #0056b3;
+}
+
+.modal {
+    /* display: none; /* Hidden by default - initial display set in HTML */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 600px; /* Max width */
+    border-radius: 8px;
+    text-align: center;
+    position: relative; /* For positioning close button */
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute; /* Position relative to modal-content */
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#customTextArea {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 95%; /* Ensure it fits well within padding */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#submitCustomTextBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#submitCustomTextBtn:hover {
+    background-color: #218838;
 }
