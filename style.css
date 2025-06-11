@@ -19,11 +19,11 @@ body {
     width: 90%; /* Keeping width relative for responsiveness */
 
     /* Updated dimensions */
-    max-width: 1000px; /* Increased from 900px */
-    max-height: 250px; /* Increased from 200px */
+    max-width: 1000px;
+    max-height: 300px; /* Increased from 250px */
 
     overflow-y: auto;
-    box-sizing: border-box; /* Ensures padding & border are within max-height */
+    box-sizing: border-box;
 }
 
 #text-to-type {
@@ -56,9 +56,33 @@ body {
     color: #666; /* Darker grey for better contrast on lines */
 }
 
+span.newline-char {
+    font-size: 0; /* Hide the actual '\n' character text */
+    color: transparent; /* Further ensure original '\n' is not visible */
+    position: relative; /* For positioning the pseudo-element */
+    /* display: inline-block; is already set on all spans */
+    vertical-align: baseline; /* Helps align with text if inline-block causes issues */
+}
+
+span.newline-char::before {
+    content: "↵"; /* The carriage return arrow symbol */
+    font-size: 22px; /* Visual size of the arrow */
+    color: #6c757d; /* Medium grey for the arrow symbol */
+    position: absolute;
+    left: 0;
+    top: 50%; /* Vertically center based on parent's line-height */
+    transform: translateY(-50%); /* Fine-tune vertical centering */
+    line-height: normal; /* Avoid inheriting large line-height from parent that might affect centering */
+}
+
 #text-to-type span.current-letter-text {
     background-color: #e0e0e0;
     border-bottom: 2px solid #007bff;
+}
+
+/* When a newline char span is also the current letter */
+span.newline-char.current-letter-text::before {
+    color: white; /* Make symbol white to be visible on typical current-letter-text background */
 }
 
 #virtual-keyboard {
@@ -281,11 +305,36 @@ body {
     background-color: #138496;
 }
 
+#statsDisplay {
+    display: flex;
+    justify-content: space-around; /* Distribute items evenly */
+    align-items: center;
+    width: 90%;
+    max-width: 600px; /* Or adjust to fit well */
+    margin: 15px auto 20px auto; /* Spacing around it */
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stat-item {
+    font-size: 1.1em; /* Slightly larger font for stats */
+    color: #343a40;
+    padding: 5px 10px;
+}
+
+#wpmDisplay { font-weight: bold; }
+#accuracyDisplay { font-weight: bold; }
+#kpmDisplay { font-weight: bold; }
+
+
 #savedTextsSection {
     width: 90%;
-    max-width: 1000px; /* Align with new max-width of other main sections */
-    margin-top: 80px; /* Increased from 30px */
-    margin-bottom: 50px; /* Ensure some space at the very bottom of the page */
+    max-width: 1000px;
+    margin-top: 120px; /* Increased from 80px */
+    margin-bottom: 50px;
     margin-left: auto;
     margin-right: auto;
 
