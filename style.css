@@ -16,32 +16,43 @@ body {
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 80%;
-    max-width: 700px;
+    width: 90%; /* Changed from 80% */
+    max-width: 900px; /* Changed from 700px */
 
-    /* New properties for scrolling */
+    /* Existing properties for scrolling */
     max-height: 200px;
     overflow-y: auto;
     box-sizing: border-box; /* Ensures padding & border are within max-height */
 }
 
 #text-to-type {
-    font-size: 24px;
-    line-height: 1.8;
+    font-size: 24px; /* Base font size */
+    line-height: 38px; /* Fixed line height for consistent line spacing (approx 1.6 * 24px) */
+    padding-top: 5px; /* Small padding so text doesn't sit on the very first line */
+
+    /* Lined paper effect */
+    background-image: linear-gradient(to bottom, transparent 37px, #e0e0e0 37px, #e0e0e0 38px);
+    background-size: 100% 38px; /* Width 100%, Height matches line-height */
+    background-attachment: local; /* Scroll with the content */
+
+    /* Existing text flow properties */
     white-space: pre-wrap;
     word-break: break-all;
     text-align: left;
+
+    min-height: 100%; /* Ensure it fills its container for background to be visible if text is short */
 }
 
 #text-to-type span {
     display: inline-block;
-    padding: 2px 1px;
+    padding: 0 1px; /* Minimal horizontal padding, no vertical padding to mess with line-height */
     border-radius: 3px;
     transition: background-color 0.2s, color 0.2s;
+    /* line-height is inherited from #text-to-type, critical for alignment */
 }
 
 #text-to-type span.placeholder {
-    color: #888;
+    color: #666; /* Darker grey for better contrast on lines */
 }
 
 #text-to-type span.current-letter-text {
@@ -252,4 +263,88 @@ body {
 }
 #submitCustomTextBtn:hover {
     background-color: #218838;
+}
+
+#saveTextBtn {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #17a2b8; /* Info blue/teal */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px; /* Space from the other button */
+    transition: background-color 0.2s;
+}
+#saveTextBtn:hover {
+    background-color: #138496;
+}
+
+#savedTextsSection {
+    width: 90%;
+    max-width: 900px; /* Match text area width */
+    margin: 30px auto; /* Centered, with space above */
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#savedTextsSection h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #495057;
+}
+
+#savedTextsContainer {
+    display: flex; /* Arrange cards in a row, wrap if needed */
+    flex-wrap: wrap;
+    gap: 15px; /* Spacing between cards */
+    justify-content: center; /* Center cards if they don't fill the row */
+}
+
+#noSavedTextsMsg {
+    width: 100%;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.saved-text-card {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    padding: 15px;
+    width: calc(33.333% - 20px); /* Example for 3 cards per row, considers 15px gap. (15*2/3 = 10 per side) */
+    min-width: 200px; /* Minimum width for smaller screens / fewer cards */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+    font-size: 0.9em;
+    line-height: 1.4;
+    position: relative; /* For positioning delete button */
+    overflow-wrap: break-word; /* Break long words in snippet */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+.saved-text-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.delete-card-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1; /* Ensure consistent height */
+}
+.delete-card-btn:hover {
+    color: #dc3545; /* Red */
 }

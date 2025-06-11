@@ -2,12 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const textToTypeElement = document.getElementById('text-to-type');
     const virtualKeyboardElement = document.getElementById('virtual-keyboard');
 
-    // New DOM Elements for Modal
     const customTextBtn = document.getElementById('customTextBtn');
     const customTextModal = document.getElementById('customTextModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const customTextArea = document.getElementById('customTextArea');
     const submitCustomTextBtn = document.getElementById('submitCustomTextBtn');
+
+    // New DOM Elements for Saved Texts
+    const saveTextBtn = document.getElementById('saveTextBtn');
+    const savedTextsContainer = document.getElementById('savedTextsContainer');
+    const noSavedTextsMsg = document.getElementById('noSavedTextsMsg');
+    const LOCAL_STORAGE_KEY = 'typingPracticeSavedTexts';
 
     let currentIndex = 0;
     let textSpans = [];
@@ -37,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Modified populateTextToType to accept text
     function populateTextToType(text) {
         textToTypeElement.innerHTML = '';
         textSpans = text.split('').map(char => {
@@ -50,33 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (textSpans.length > 0) {
             textSpans[0].classList.add('current-letter-text');
-            updateKeyboardHighlight(textSpans[0].textContent, true); // Highlight first key
-
-            // --- Auto-scroll for the first character ---
+            updateKeyboardHighlight(textSpans[0].textContent, true);
             if (typeof textSpans[0].scrollIntoView === 'function') {
-                textSpans[0].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' }); // 'auto' for initial load
+                textSpans[0].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'nearest' });
             }
-            // --- End auto-scroll for first character ---
         }
     }
 
     function createVirtualKeyboard() {
         virtualKeyboardElement.innerHTML = '';
-        const fingerZoneMap = { /* ... fingerZoneMap definition from previous step ... */
-            // Left Hand
-            '`': 'zone-l-pinky', '1': 'zone-l-pinky', 'q': 'zone-l-pinky', 'a': 'zone-l-pinky', 'z': 'zone-l-pinky', 'Tab': 'zone-l-pinky', 'Caps Lock': 'zone-l-pinky', 'ShiftLeft': 'zone-l-pinky', 'ControlLeft': 'zone-l-pinky', 'AltLeft': 'zone-l-pinky',
-            '2': 'zone-l-ring', 'w': 'zone-l-ring', 's': 'zone-l-ring', 'x': 'zone-l-ring',
-            '3': 'zone-l-middle', 'e': 'zone-l-middle', 'd': 'zone-l-middle', 'c': 'zone-l-middle',
-            '4': 'zone-l-index', 'r': 'zone-l-index', 'f': 'zone-l-index', 'v': 'zone-l-index',
-            '5': 'zone-l-index-far', 't': 'zone-l-index-far', 'g': 'zone-l-index-far', 'b': 'zone-l-index-far',
-            // Right Hand
-            '6': 'zone-r-index-far', 'y': 'zone-r-index-far', 'h': 'zone-r-index-far', 'n': 'zone-r-index-far',
-            '7': 'zone-r-index', 'u': 'zone-r-index', 'j': 'zone-r-index', 'm': 'zone-r-index',
-            '8': 'zone-r-middle', 'i': 'zone-r-middle', 'k': 'zone-r-middle', ',': 'zone-r-middle',
-            '9': 'zone-r-ring', 'o': 'zone-r-ring', 'l': 'zone-r-ring', '.': 'zone-r-ring',
-            '0': 'zone-r-pinky', '-': 'zone-r-pinky', '=': 'zone-r-pinky', 'p': 'zone-r-pinky', '[': 'zone-r-pinky', ']': 'zone-r-pinky', '\\': 'zone-r-pinky', ';': 'zone-r-pinky', "'": 'zone-r-pinky', '/': 'zone-r-pinky', 'Backspace': 'zone-r-pinky', 'Enter': 'zone-r-pinky', 'ShiftRight': 'zone-r-pinky', 'AltRight': 'zone-r-pinky', 'ControlRight': 'zone-r-pinky',
-            // Thumbs
-            'Space': 'zone-thumb'
+        const fingerZoneMap = {
+            '`': 'zone-l-pinky', '1': 'zone-l-pinky', 'q': 'zone-l-pinky', 'a': 'zone-l-pinky', 'z': 'zone-l-pinky', 'Tab': 'zone-l-pinky', 'Caps Lock': 'zone-l-pinky', 'ShiftLeft': 'zone-l-pinky', 'ControlLeft': 'zone-l-pinky', 'AltLeft': 'zone-l-pinky', '2': 'zone-l-ring', 'w': 'zone-l-ring', 's': 'zone-l-ring', 'x': 'zone-l-ring', '3': 'zone-l-middle', 'e': 'zone-l-middle', 'd': 'zone-l-middle', 'c': 'zone-l-middle', '4': 'zone-l-index', 'r': 'zone-l-index', 'f': 'zone-l-index', 'v': 'zone-l-index', '5': 'zone-l-index-far', 't': 'zone-l-index-far', 'g': 'zone-l-index-far', 'b': 'zone-l-index-far', '6': 'zone-r-index-far', 'y': 'zone-r-index-far', 'h': 'zone-r-index-far', 'n': 'zone-r-index-far', '7': 'zone-r-index', 'u': 'zone-r-index', 'j': 'zone-r-index', 'm': 'zone-r-index', '8': 'zone-r-middle', 'i': 'zone-r-middle', 'k': 'zone-r-middle', ',': 'zone-r-middle', '9': 'zone-r-ring', 'o': 'zone-r-ring', 'l': 'zone-r-ring', '.': 'zone-r-ring', '0': 'zone-r-pinky', '-': 'zone-r-pinky', '=': 'zone-r-pinky', 'p': 'zone-r-pinky', '[': 'zone-r-pinky', ']': 'zone-r-pinky', '\\': 'zone-r-pinky', ';': 'zone-r-pinky', "'": 'zone-r-pinky', '/': 'zone-r-pinky', 'Backspace': 'zone-r-pinky', 'Enter': 'zone-r-pinky', 'ShiftRight': 'zone-r-pinky', 'AltRight': 'zone-r-pinky', 'ControlRight': 'zone-r-pinky', 'Space': 'zone-thumb'
         };
         const keyboardLayout = [
             ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
@@ -125,35 +113,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Helper function to reset typing practice
     function resetTypingPractice() {
         if (textSpans && textSpans.length > 0 && currentIndex < textSpans.length && textSpans[currentIndex] && textSpans[currentIndex].textContent) {
-            updateKeyboardHighlight(textSpans[currentIndex].textContent, false); // Deactivate old current key
+            updateKeyboardHighlight(textSpans[currentIndex].textContent, false);
         }
         currentIndex = 0;
-        populateTextToType(currentPracticeText); // This will re-populate and set the first letter highlight
+        populateTextToType(currentPracticeText);
         console.log("Typing practice reset.");
     }
 
-    // Event Listeners for Modal
     if (customTextBtn) {
         customTextBtn.onclick = function() {
             if(customTextModal) customTextModal.style.display = "block";
             if(customTextArea) {
-                customTextArea.value = currentPracticeText; // Pre-fill with current text
+                customTextArea.value = currentPracticeText;
                 customTextArea.focus();
             }
         }
     }
-
-    if (closeModalBtn) {
-        closeModalBtn.onclick = function() {
-            if(customTextModal) customTextModal.style.display = "none";
-        }
-    }
-
+    if (closeModalBtn) closeModalBtn.onclick = () => { if(customTextModal) customTextModal.style.display = "none"; };
     if (submitCustomTextBtn) {
-        submitCustomTextBtn.onclick = function() {
+        submitCustomTextBtn.onclick = () => {
             if(customTextArea) {
                 const newText = customTextArea.value;
                 if (newText.trim() !== "") {
@@ -166,31 +146,89 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+    window.onclick = (event) => { if (event.target == customTextModal) { if(customTextModal) customTextModal.style.display = "none"; }};
 
-    window.onclick = function(event) {
-        if (event.target == customTextModal) {
-            if(customTextModal) customTextModal.style.display = "none";
+    // Saved Texts Logic
+    function renderSavedTexts() {
+        if (!savedTextsContainer || !noSavedTextsMsg) return;
+
+        savedTextsContainer.innerHTML = '';
+        const savedTexts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+
+        if (savedTexts.length === 0) {
+            noSavedTextsMsg.style.display = 'block';
+            return;
+        }
+        noSavedTextsMsg.style.display = 'none';
+
+        savedTexts.forEach((text, index) => {
+            const card = document.createElement('div');
+            card.classList.add('saved-text-card');
+            const snippet = text.substring(0, 100) + (text.length > 100 ? '...' : '');
+            card.textContent = snippet;
+            card.title = text;
+
+            card.addEventListener('click', () => {
+                currentPracticeText = text;
+                resetTypingPractice();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '×';
+            deleteBtn.classList.add('delete-card-btn');
+            deleteBtn.title = 'Delete this saved text';
+            deleteBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                deleteSavedText(index);
+            });
+
+            card.appendChild(deleteBtn);
+            savedTextsContainer.appendChild(card);
+        });
+    }
+
+    function saveCurrentText() {
+        if (!currentPracticeText || currentPracticeText.trim() === "") {
+            alert("There is no text to save.");
+            return;
+        }
+        const savedTexts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        if (savedTexts.includes(currentPracticeText)) {
+            alert("This text is already saved.");
+            return;
+        }
+        savedTexts.push(currentPracticeText);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTexts));
+        alert("Text saved!");
+        renderSavedTexts();
+    }
+
+    function deleteSavedText(indexToDelete) {
+        let savedTexts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        if (indexToDelete >= 0 && indexToDelete < savedTexts.length) {
+            const textToDeleteSnippet = savedTexts[indexToDelete].substring(0,20) + "...";
+            if (confirm(`Are you sure you want to delete this text card: "${textToDeleteSnippet}"?`)) {
+                savedTexts.splice(indexToDelete, 1);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTexts));
+                renderSavedTexts();
+            }
         }
     }
 
-    // Keydown event listener for typing logic
+    if (saveTextBtn) {
+        saveTextBtn.addEventListener('click', saveCurrentText);
+    }
+
+    // Keydown event listener
     document.addEventListener('keydown', (event) => {
         const pressedKey = event.key;
-        if (currentIndex >= textSpans.length) return; // Typing complete
+        if (currentIndex >= textSpans.length) return;
 
-        // If modal is open, don't process typing in background
         if (customTextModal && customTextModal.style.display === "block") {
-            // Allow Enter key for submitting text in textarea if textarea is focused
-            if (pressedKey === 'Enter' && document.activeElement === customTextArea) {
-                // Let the textarea handle the Enter key (e.g. new line) or handle submission if desired
-                // For now, we let the button handle submission explicitly.
-                // event.preventDefault(); // Optionally prevent default Enter behavior in textarea
-                return;
-            }
-            // Allow other keys for textarea input
+            if (pressedKey === 'Enter' && document.activeElement === customTextArea) return;
             if (document.activeElement === customTextArea) return;
         }
-
 
         const currentSpan = textSpans[currentIndex];
         const expectedChar = currentSpan.textContent;
@@ -211,20 +249,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentIndex < textSpans.length) {
                 const nextSpan = textSpans[currentIndex];
                 nextSpan.classList.add('current-letter-text');
-                updateKeyboardHighlight(nextSpan.textContent, true); // Activate next key
-
-                // --- New auto-scroll logic ---
+                updateKeyboardHighlight(nextSpan.textContent, true);
                 if (nextSpan && typeof nextSpan.scrollIntoView === 'function') {
                     nextSpan.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
                 }
-                // --- End of new auto-scroll logic ---
-
             } else {
-                // Text completed
-                updateKeyboardHighlight(expectedChar, false); // Deactivate last key
+                updateKeyboardHighlight(expectedChar, false);
                 setTimeout(() => alert("Congratulations! Text completed."), 100);
             }
-        } else { // Incorrect key
+        } else {
             if (currentIndex < textSpans.length) {
                 textSpans[currentIndex].classList.add('incorrect-letter-flash');
                 setTimeout(() => {
@@ -256,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Setup
     createVirtualKeyboard();
     populateTextToType(currentPracticeText);
+    renderSavedTexts(); // Display saved texts on page load
 
     console.log("Typing practice script loaded and initialized.");
 });

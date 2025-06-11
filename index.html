@@ -12,8 +12,18 @@
     </div>
     <div id="controls"> <!-- New container for controls -->
         <button id="customTextBtn">Use Custom Text</button>
+        <button id="saveTextBtn">Save Current Text</button> <!-- New Button -->
     </div>
     <div id="virtual-keyboard"></div>
+
+    <!-- After <div id="virtual-keyboard"></div> -->
+    <div id="savedTextsSection">
+        <h2>Saved Practice Texts</h2>
+        <div id="savedTextsContainer">
+            <!-- Saved text cards will be dynamically added here by JavaScript -->
+            <p id="noSavedTextsMsg">No texts saved yet.</p> <!-- Placeholder message -->
+        </div>
+    </div>
 
     <!-- Modal Structure (add before closing </body> tag) -->
     <div id="customTextModal" class="modal" style="display:none;">
