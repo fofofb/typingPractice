@@ -4,19 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     let textSpans = [];
 
-    // Added a shorter text for easier testing, can be changed back later
     const sampleText = "Type this short text. Then type this one. And this.";
     // const sampleText = "Hello world! This is a typing practice example. Type this text accurately and quickly. Good luck and have fun practicing your typing skills. The quick brown fox jumps over the lazy dog.";
 
 
     function getVirtualKeyId(char) {
         if (char === ' ') return 'key-space';
-        if (char === 'ShiftLeft' || char === 'ShiftRight' || char === 'ControlLeft' || char === 'ControlRight' || char === 'AltLeft' || char === 'AltRight' || char === 'Caps Lock' || char === 'Tab' || char === 'Enter' || char === 'Backspace') {
+        // Handle named keys from keyboardLayout directly
+        const namedKeys = ['Backspace', 'Tab', 'Caps Lock', 'Enter', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'AltLeft', 'AltRight', 'ControlRight'];
+        if (namedKeys.includes(char)) {
             return `key-${char.replace(/\s+/g, '')}`;
         }
-        // For regular characters, ensure it's lowercase for ID consistency
-        // However, the displayed text on keys might be different (e.g. '`' vs 'key-`')
-        // The IDs generated in createVirtualKeyboard are like 'key-q', 'key-`', 'key-1'
+
         const specialCharsMap = {
             '`': 'key-`', '~': 'key-`',
             '1': 'key-1', '!': 'key-1',
@@ -29,11 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
             '8': 'key-8', '*': 'key-8',
             '9': 'key-9', '(': 'key-9',
             '0': 'key-0', ')': 'key-0',
-            '-': 'key--', '_': 'key--', // ID was key--
+            '-': 'key--', '_': 'key--',
             '=': 'key-=', '+': 'key-=',
             '[': 'key-[', '{': 'key-[',
             ']': 'key-]', '}': 'key-]',
-            '\\': 'key-\\', '|': 'key-\\', // ID was key-\
+            '\\': 'key-\\', '|': 'key-\\',
             ';': 'key-;', ':': 'key-;',
             "'": "key-'", '"': "key-'",
             ',': 'key-,', '<': 'key-,',
@@ -70,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (textSpans.length > 0) {
             textSpans[0].classList.add('current-letter-text');
-            updateKeyboardHighlight(textSpans[0].textContent, true); // Highlight first key
+            updateKeyboardHighlight(textSpans[0].textContent, true);
         }
     }
 
@@ -78,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         virtualKeyboardElement.innerHTML = '';
         const keyboardLayout = [
             ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-            ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'], // Escaped backslash
+            ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
             ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
             ['ShiftLeft', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'ShiftRight'],
             ['ControlLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight']
@@ -89,26 +88,35 @@ document.addEventListener('DOMContentLoaded', () => {
             rowElement.classList.add('keyboard-row');
             row.forEach(key => {
                 const keyElement = document.createElement('div');
-                keyElement.classList.add('key');
+                keyElement.classList.add('key'); // Base class
                 keyElement.textContent = key;
 
                 let keyId;
                 if (key === ' ') keyId = 'key-space';
-                else if (key === '\\') keyId = 'key-\\'; // Special ID for backslash character
-                else if (key === '-') keyId = 'key--'; // Special ID for hyphen
+                else if (key === '\\') keyId = 'key-\\';
+                else if (key === '-') keyId = 'key--';
                 else if (key.length > 1) keyId = `key-${key.replace(/\s+/g, '')}`;
-                else keyId = `key-${key.toLowerCase()}`; // Default to lowercase for single chars
-
+                else keyId = `key-${key.toLowerCase()}`;
                 keyElement.id = keyId;
 
-                if (key.length > 1 || ['`','\\','[',']',';',"'",',','.','/','-','='].includes(key)) {
-                    keyElement.classList.add('special');
+                // Add sizing classes
+                if (key === 'Backspace') keyElement.classList.add('key-backspace');
+                else if (key === 'Tab') keyElement.classList.add('key-tab');
+                else if (key === 'Caps Lock') keyElement.classList.add('key-capslock');
+                else if (key === 'Enter') keyElement.classList.add('key-enter');
+                else if (key === 'ShiftLeft' || key === 'ShiftRight') keyElement.classList.add('key-shift');
+                else if (key === 'Space') keyElement.classList.add('key-space');
+                else if (key === 'ControlLeft' || key === 'ControlRight' || key === 'AltLeft' || key === 'AltRight') keyElement.classList.add('key-modifier');
+                else keyElement.classList.add('key-standard');
+
+                // Visual distinction for special char keys (non-alpha)
+                if (key.length === 1 && !key.match(/[a-z0-9 ]/i)) { // Check if it's a single character and not alphanumeric or space
+                     keyElement.classList.add('special-visual');
+                } else if (key.length > 1 && !['Backspace', 'Tab', 'Caps Lock', 'Enter', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'AltLeft', 'Space', 'AltRight', 'ControlRight'].includes(key)){
+                     keyElement.classList.add('special-visual'); // if it's a multi-char key not in the list of special function keys
                 }
-                if (key === 'Space') keyElement.style.flexGrow = "6";
-                if (['Backspace', 'Tab', 'Enter', 'Caps Lock'].includes(key) || key.startsWith('Shift') || key.startsWith('Control') || key.startsWith('Alt')) {
-                    keyElement.style.flexGrow = "2";
-                    keyElement.style.minWidth = "60px";
-                }
+
+
                 rowElement.appendChild(keyElement);
             });
             virtualKeyboardElement.appendChild(rowElement);
@@ -118,62 +126,56 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         const pressedKey = event.key;
 
-        // Ignore if typing is complete
-        if (currentIndex >= textSpans.length) {
-            return;
-        }
+        if (currentIndex >= textSpans.length) return;
 
         const currentSpan = textSpans[currentIndex];
         const expectedChar = currentSpan.textContent;
 
-        // Prevent default for space and potentially other keys if they cause scrolling etc.
-        if (pressedKey === ' ' && expectedChar === ' ') {
-            event.preventDefault();
-        }
-        // Allow functionality of Tab, Enter, Backspace, etc. for now, but don't process as typed characters unless they match.
-        // More specific handling might be needed if we want to use them to control the app itself.
+        if (pressedKey === ' ' && expectedChar === ' ') event.preventDefault();
 
-        // Handle non-typable functional keys (Shift, Control, Alt, CapsLock, Meta, etc.)
-        // also check if the pressed key is a single character, otherwise it's a special key
-        if (pressedKey.length > 1 && !['Tab', 'Enter', 'Backspace', 'Space'].includes(pressedKey) ) {
-             if (pressedKey !== expectedChar) { // only ignore if it's not the character we expect (e.g. text contains "ShiftLeft")
-                console.log(`Functional key pressed: ${pressedKey}. Ignoring for typing comparison.`);
-                return;
-            }
+        // Simplified check for ignorable functional keys
+        // if (pressedKey.length > 1 && !['Tab', 'Enter', 'Backspace', 'Space'].includes(pressedKey) && pressedKey !== expectedChar) {
+        // Keys like 'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Escape', 'ArrowUp', etc.
+        // We also need to consider if the expectedChar itself is one of these (e.g. if "ShiftLeft" was in sampleText)
+        const isFunctionalKey = pressedKey.length > 1 &&
+                               !['Enter', 'Tab', 'Backspace', 'Space'].includes(pressedKey); // Space is single char, others are multi-char
+
+        if (isFunctionalKey && pressedKey !== expectedChar) {
+            console.log(`Functional key pressed: ${pressedKey}. Expected: ${expectedChar}. Ignoring.`);
+            return;
         }
 
 
         if (pressedKey === expectedChar) {
             currentSpan.classList.remove('placeholder', 'current-letter-text', 'incorrect-letter-flash');
             currentSpan.classList.add('correct-letter', 'selected-letter');
-            updateKeyboardHighlight(expectedChar, false); // Deactivate current key
+            updateKeyboardHighlight(expectedChar, false);
 
             currentIndex++;
 
             if (currentIndex < textSpans.length) {
                 const nextSpan = textSpans[currentIndex];
                 nextSpan.classList.add('current-letter-text');
-                updateKeyboardHighlight(nextSpan.textContent, true); // Activate next key
+                updateKeyboardHighlight(nextSpan.textContent, true);
             } else {
-                // Text completed
-                setTimeout(() => alert("Congratulations! Text completed."), 100); // Timeout to allow final styles to render
-                // Optionally, could reset or load new text here.
-                updateKeyboardHighlight(expectedChar, false); // Ensure last key is deactivated
+                setTimeout(() => alert("Congratulations! Text completed."), 100);
+                updateKeyboardHighlight(expectedChar, false);
             }
         } else {
-            // Incorrect key pressed (and it's not one of the ignored functional keys)
-            // Check if it's a printable character or one of the allowed special keys (Space, Backspace, etc. if they were part of expected)
-            // This check ensures we don't flash for Shift, Ctrl, etc. if they weren't the expected char.
-             if (pressedKey.length === 1 || ['Tab', 'Enter', 'Backspace', 'Space'].includes(pressedKey)) {
-                currentSpan.classList.add('incorrect-letter-flash');
-                setTimeout(() => {
-                    currentSpan.classList.remove('incorrect-letter-flash');
-                }, 300); // Flash duration
+            // Only flash for printable characters or space, tab, enter, backspace if they were expected but mismatched
+            if (pressedKey.length === 1 || ['Enter', 'Tab', 'Backspace'].includes(pressedKey)) {
+                 if (currentIndex < textSpans.length) { // Check if there's still a current character
+                    textSpans[currentIndex].classList.add('incorrect-letter-flash');
+                    setTimeout(() => {
+                        if (currentIndex < textSpans.length) { // Check again in case text was completed or reset
+                           textSpans[currentIndex].classList.remove('incorrect-letter-flash');
+                        }
+                    }, 300);
+                }
             }
         }
     });
 
-    // Initial setup
     populateTextToType();
     createVirtualKeyboard();
 
