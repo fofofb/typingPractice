@@ -27,33 +27,37 @@ body {
 }
 
 #text-to-type {
-    font-size: 24px; /* Base font size */
-    line-height: 38px; /* Fixed line height for consistent line spacing (approx 1.6 * 24px) */
-    padding-top: 5px; /* Small padding so text doesn't sit on the very first line */
+    font-size: 24px;
+    line-height: 38px; /* This defines the spacing for our lines */
 
-    /* Lined paper effect */
-    background-image: linear-gradient(to bottom, transparent 37px, #e0e0e0 37px, #e0e0e0 38px);
-    background-size: 100% 38px; /* Width 100%, Height matches line-height */
-    background-attachment: local; /* Scroll with the content */
+    padding-top: 3px; /* Reduced from 5px, small offset from top border/edge */
 
-    /* Existing text flow properties */
+    background-image: linear-gradient(to bottom,
+        transparent calc(38px - 1px), /* Transparent until the last pixel */
+        #d1d1d1 calc(38px - 1px),   /* Line color starts (slightly darker grey for better visibility) */
+        #d1d1d1 38px               /* Line color ends */
+    );
+    background-size: 100% 38px; /* Repeat every 38px vertically */
+    background-attachment: local; /* Scroll with text */
+    background-origin: content-box; /* CRITICAL: Start background after padding */
+
     white-space: pre-wrap;
     word-break: break-all;
     text-align: left;
-
-    min-height: 100%; /* Ensure it fills its container for background to be visible if text is short */
+    min-height: 100%; /* Ensure background covers area if text is short */
+    color: #333; /* Ensure good text contrast if not set elsewhere */
 }
 
 #text-to-type span {
     display: inline-block;
-    padding: 0 1px; /* Minimal horizontal padding, no vertical padding to mess with line-height */
+    padding: 0 1px; /* NO vertical padding */
     border-radius: 3px;
     transition: background-color 0.2s, color 0.2s;
-    /* line-height is inherited from #text-to-type, critical for alignment */
+    vertical-align: baseline; /* Helps align text consistently */
 }
 
 #text-to-type span.placeholder {
-    color: #666; /* Darker grey for better contrast on lines */
+    color: #555; /* Adjusted from #666 for potentially darker lines */
 }
 
 span.newline-char {
@@ -208,8 +212,15 @@ span.newline-char.current-letter-text::before {
 }
 
 #controls {
-    margin-bottom: 15px;
     text-align: center;
+    margin-bottom: 15px;
+
+    /* New for alignment consistency */
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 15px; /* Add some horizontal padding so buttons aren't at screen edge */
+    box-sizing: border-box; /* If padding is added */
 }
 
 #customTextBtn {
